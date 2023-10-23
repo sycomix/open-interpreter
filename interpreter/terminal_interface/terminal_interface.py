@@ -27,14 +27,10 @@ def terminal_interface(interpreter, message):
         interpreter_intro_message.append("Press `CTRL-C` to exit.")
 
         display_markdown_message("\n\n".join(interpreter_intro_message))
-    
+
     active_block = None
 
-    if message:
-        interactive = False
-    else:
-        interactive = True
-
+    interactive = not message
     while True:
         try:
             if interactive:
@@ -57,12 +53,12 @@ def terminal_interface(interpreter, message):
         # In the event we get code -> output -> code again
         ran_code_block = False
         render_cursor = False
-            
+
         try:
             for chunk in interpreter.chat(message, display=False, stream=True):
                 if interpreter.debug_mode:
                     print("Chunk in `terminal_interface`:", chunk)
-                
+
                 # Message
                 if "message" in chunk:
                     if active_block is None:
@@ -83,7 +79,7 @@ def terminal_interface(interpreter, message):
                         active_block = CodeBlock()
                     ran_code_block = False
                     render_cursor = True
-                
+
                 if "language" in chunk:
                     active_block.language = chunk["language"]
                 if "code" in chunk:
@@ -91,7 +87,6 @@ def terminal_interface(interpreter, message):
                 if "active_line" in chunk:
                     active_block.active_line = chunk["active_line"]
 
-                # Execution notice
                 if "executing" in chunk:
                     if not interpreter.auto_run:
                         # OI is about to execute code. The user wants to approve this
@@ -101,7 +96,7 @@ def terminal_interface(interpreter, message):
 
                         should_scan_code = False
 
-                        if not interpreter.safe_mode == "off":
+                        if interpreter.safe_mode != "off":
                             if interpreter.safe_mode == "auto":
                                 should_scan_code = True
                             elif interpreter.safe_mode == 'ask':
@@ -143,7 +138,7 @@ def terminal_interface(interpreter, message):
                     render_cursor = False
                     active_block.output += "\n" + chunk["output"]
                     active_block.output = active_block.output.strip() # <- Aesthetic choice
-                    
+
                     # Truncate output
                     active_block.output = truncate_output(active_block.output, interpreter.max_output)
 

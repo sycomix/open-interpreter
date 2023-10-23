@@ -125,7 +125,7 @@ def cli(interpreter):
                 # Fallback to using 'open' on macOS if 'xdg-open' is not available
                 subprocess.call(['open', config_path])
         return
-    
+
     # TODO Implement model explorer
     """
     # If --models is used, list models
@@ -141,7 +141,7 @@ def cli(interpreter):
             setattr(interpreter, attr_name, attr_value)
 
     # if safe_mode and auto_run are enabled, safe_mode disables auto_run
-    if interpreter.auto_run and not interpreter.safe_mode == "off":
+    if interpreter.auto_run and interpreter.safe_mode != "off":
         setattr(interpreter, "auto_run", False)
 
     # Default to CodeLlama if --local is on but --model is unset
@@ -153,12 +153,12 @@ def cli(interpreter):
     if args.conversations:
         conversation_navigator(interpreter)
         return
-    
+
     if args.version:
         version = pkg_resources.get_distribution("open-interpreter").version
         print(f"Open Interpreter {version}")
         return
-    
+
     # Depracated --fast
     if args.fast:
         # This will cause the terminal_interface to walk the user through setting up a local LLM

@@ -13,10 +13,7 @@ def get_language_file_extension(language_name):
     """
     language = language_map[language_name.lower()]
 
-    if language.file_extension:
-        return language.file_extension
-    else:
-        return language
+    return language.file_extension if language.file_extension else language
 
 
 def get_language_proper_name(language_name):
@@ -25,10 +22,7 @@ def get_language_proper_name(language_name):
     """
     language = language_map[language_name.lower()]
 
-    if language.proper_name:
-        return language.proper_name
-    else:
-        return language
+    return language.proper_name if language.proper_name else language
 
 
 def scan_code(code, language, interpreter):
